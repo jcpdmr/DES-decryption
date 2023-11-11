@@ -40,8 +40,8 @@ void generate_keys(string key, string(&round_keys)[16]){
     }
     string left= perm_key.substr(0, 28);
     string right= perm_key.substr(28, 28);
-    for(int i=0; i<16; i++){
-        if(i == 0 || i == 1 || i==8 || i==15 ){
+    for(int n_key = 0; n_key < 16; n_key++){
+        if(n_key == 0 || n_key == 1 || n_key==8 || n_key==15 ){
             left= shift_left_once(left);
             right= shift_left_once(right);
         }
@@ -51,10 +51,10 @@ void generate_keys(string key, string(&round_keys)[16]){
         }
         string combined_key = left + right;
         string round_key;
-        for(i = 0; i < 48; i++){
-            round_key += combined_key[pc2[i]-1];
+        for(int j = 0; j < 48; j++){
+            round_key += combined_key[pc2[j]-1];
         }
-        round_keys[i] = round_key;
+        round_keys[n_key] = round_key;
         // std::cout<<"Key "<<i+1<<": "<<round_keys[i]<<endl;
     }
 }
