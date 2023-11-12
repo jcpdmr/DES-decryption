@@ -49,7 +49,7 @@ int main(){
     string str_d1 =                                               "1100100100010110000000011010";
     string str_d2 =                                               "1001001000101100000000110101";
 
-    grid();
+    grid(false); // It doesn't work for an error in displaying
     grid_bin(key);
     cout << endl;
 

@@ -19,7 +19,7 @@ string Xor(string a, string b);
 string encrypt(string &plain_text, string (&round_keys)[16]);
 uint64_t permute(uint64_t& key);
 void printBinaryWithSpaces(uint64_t value, int bitsPerGroup);
-void grid();
+void grid(bool right_least_sign);
 void grid_bin(uint64_t& bin_val);
 void grid_str(string& str_val);
 void grid_compare(uint64_t& bin_val, string& str_val);

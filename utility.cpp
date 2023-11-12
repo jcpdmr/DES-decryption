@@ -15,7 +15,8 @@ uint64_t permute(uint64_t& key){
     for(int i = 0; i < 56; i++){
         // ((key >> pc1_bin[i]) & 1) check if the bit of key in position 56, 48, 42, ... is a 1 or 0
         // |= () << i add the bit in position 0, 1, 2, ... to the permuted key
-        perm_key |= ((key >> pc1_bin[i]) & 1) << (56 - 1 - i);
+
+        perm_key |= (((key >> (63 - pc1_bin[i]) & 1) << (56 - 1 - i)));
     }
 
     return perm_key;
@@ -35,12 +36,21 @@ void printBinaryWithSpaces(uint64_t value, int bitsPerGroup) {
     cout << endl;
 }
 
-void grid(){
-    // |64 |63 |62 |61 |60 ...
-    for (int i = 63; i >= 0; i--) {
-        cout << "|" << setw(2) << setfill(' ') << i << " ";
+void grid(bool right_least_sign){
+    if(right_least_sign){
+        // |64 |63 |62 |61 |60 ...
+        for (int i = 63; i >= 0; i--) {
+            cout << "|" << setw(2) << setfill(' ') << i << " ";
+        }
+        cout << endl;
     }
-    cout << endl;
+    else{
+        // | 0 | 1 | 2 | 3 | 4 ...
+        for (int i = 0; i <= 63; i++) {
+            cout << "|" << setw(2) << setfill(' ') << i << " ";
+        }
+        cout << endl;
+    }
 }
 
 void grid_bin(uint64_t& bin_val){
