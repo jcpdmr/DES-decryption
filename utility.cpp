@@ -10,15 +10,15 @@ using namespace std;
 //    return perm_string;
 //}
 
-uint64_t permute(uint64_t& key){
+uint64_t permute(uint64_t &key, const int* pattern, int n) {
     uint64_t perm_key = 0;
-    for(int i = 0; i < 56; i++){
-        // ((key >> pc1_bin[i]) & 1) check if the bit of key in position 56, 48, 42, ... is a 1 or 0
+    for(int i = 0; i < n; i++){
+        // ((key >> pattern[i]) & 1) check if the bit of key in position 7, 15, 23, ... from
+        // the right is a 1 or 0
         // |= () << i add the bit in position 0, 1, 2, ... to the permuted key
 
-        perm_key |= (((key >> (63 - pc1_bin[i]) & 1) << (56 - 1 - i)));
+        perm_key |= (((key >> pattern[i]) & 1) << (n - 1 - i));
     }
-
     return perm_key;
 }
 
@@ -107,6 +107,20 @@ string shift_left_once(string key_chunk){
     }
     shifted += key_chunk[0];
     return shifted;
+}
+
+uint64_t shift_left(uint64_t bin_key, bool shift_twice){
+    // The key has 28 bits
+    uint64_t shifted_key;
+    // Shift first time
+    int most_sign_bit = (int)(bin_key >> 27) & 1;
+    shifted_key = (bin_key << 1) & (~(1 << 28)) | most_sign_bit;
+    // If needed, shift another time
+    if(shift_twice){
+        most_sign_bit = (int)(shifted_key>> 27) & 1;
+        shifted_key = (shifted_key << 1) & (~(1 << 28)) | most_sign_bit;
+    }
+    return shifted_key;
 }
 
 string shift_left_twice(string key_chunk){

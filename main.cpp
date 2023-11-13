@@ -35,6 +35,7 @@
 //}
 
 int main(){
+    uint64_t key28 =        0b0000000000000000000000000000000000001110111111000111111111110011;
     uint64_t key =          0b0101010001100101011100110111010000110001001100100011001100110100;
     string str_key =         "0101010001100101011100110111010000110001001100100011001100110100";
 
@@ -49,13 +50,17 @@ int main(){
     string str_d1 =                                               "1100100100010110000000011010";
     string str_d2 =                                               "1001001000101100000000110101";
 
-    grid(false); // It doesn't work for an error in displaying
-    grid_bin(key);
-    cout << endl;
-
-    uint64_t perm_key;
-    perm_key = permute(key);
-    grid_compare(perm_key, str_pc1);
+    grid(true);
+    grid_bin(key28);
+    uint64_t shift;
+    shift = shift_left(key28, true);
+    grid_bin(shift);
+//    grid_str(str_key);
+//    cout << endl;
+//
+//    uint64_t perm_key;
+//    perm_key = permute(key, pc1_bin, 56);
+//    grid_compare(perm_key, str_pc1);
     return 0;
 }
 
