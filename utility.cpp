@@ -10,7 +10,7 @@ using namespace std;
 //    return perm_string;
 //}
 
-uint64_t permute(uint64_t &key, const int* pattern, int n) {
+uint64_t permute(const uint64_t &key, const int* pattern, const int n) {
     uint64_t perm_key = 0;
     for(int i = 0; i < n; i++){
         // ((key >> pattern[i]) & 1) check if the bit of key in position 7, 15, 23, ... from
@@ -109,7 +109,7 @@ string shift_left_once(string key_chunk){
     return shifted;
 }
 
-uint64_t shift_left(uint64_t bin_key, bool shift_twice){
+uint64_t shift_left(const uint64_t bin_key, const bool shift_twice){
     // The key has 28 bits
     uint64_t shifted_key;
     // Shift first time
@@ -140,6 +140,42 @@ void print_keys(string(&round_keys)[16]){
     // Print the 16 round keys
     for(int i = 0; i < 16; i++){
         cout << "Key " << setw(2) << setfill('0') << i+1<< ": " << round_keys[i]<<endl;
+    }
+}
+
+void split(const uint64_t &key, uint64_t &left, uint64_t&right, int bit_len_of_block){
+    left = key >> bit_len_of_block;
+    right = key & ((1ULL << bit_len_of_block) - 1);
+}
+
+uint64_t merge(uint64_t &left, uint64_t&right, const int bit_len_of_block){
+    uint64_t merged_key;
+    merged_key = (left << bit_len_of_block) | right;
+    return merged_key;
+}
+
+void generate_keys(uint64_t key, uint64_t(&round_keys)[16]){
+    // key is 64 bit, perm_key is 56 bit
+    uint64_t perm_key, left, right;
+    perm_key = permute(key, pc1_bin, 56);
+
+    split(perm_key, left, right, 28);
+    for(int n_key = 0; n_key < 16; n_key++){
+        if(n_key == 0 || n_key == 1 || n_key == 8 || n_key == 15 ){
+            left = shift_left(left);
+            right = shift_left(right);
+        }
+        else{
+            left = shift_left(left, true);
+            right = shift_left(right, true);
+        }
+        uint64_t combined_key = merge(left, right, 28);
+        uint64_t round_key;
+
+        round_key = permute(combined_key, pc2_bin, 48);
+
+        // Add the key to the round keys array
+        round_keys[n_key] = round_key;
     }
 }
 
@@ -190,11 +226,17 @@ int convertBinaryToDecimal(string binary)
     for(int i = size - 1; i >= 0; i--)
     {
         if(binary[i] == '1'){
-            decimal += pow(2, counter);
+            decimal += (int)pow(2, counter);
         }
         counter++;
     }
     return decimal;
+}
+
+uint64_t Xor(const uint64_t& a, const uint64_t& b){
+    uint64_t xor_result;
+    xor_result = a ^ b;
+    return xor_result;
 }
 
 string Xor(string a, string b){

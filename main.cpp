@@ -1,7 +1,6 @@
 #include <iostream>
 #include "utility.h"
 
-
 //int main(){
 //    // Key is "Test1234"
 //    string key = "0101010001100101011100110111010000110001001100100011001100110100";
@@ -35,10 +34,10 @@
 //}
 
 int main(){
-    uint64_t key28 =        0b0000000000000000000000000000000000001110111111000111111111110011;
-    uint64_t key =          0b0101010001100101011100110111010000110001001100100011001100110100;
+    uint64_t bin_key =          0b0101010001100101011100110111010000110001001100100011001100110100;
     string str_key =         "0101010001100101011100110111010000110001001100100011001100110100";
-
+    uint64_t bin_round_keys[16];
+    string str_round_keys[16];
     // Testing string                 |                           |
     string str_pc1 =                 "00000000000011111111111011110110010010001011000000001101";
     //                                | <- left shift rotate
@@ -50,24 +49,11 @@ int main(){
     string str_d1 =                                               "1100100100010110000000011010";
     string str_d2 =                                               "1001001000101100000000110101";
 
-    grid(true);
-    grid_bin(key28);
-    uint64_t shift;
-    shift = shift_left(key28, true);
-    grid_bin(shift);
-//    grid_str(str_key);
-//    cout << endl;
-//
-//    uint64_t perm_key;
-//    perm_key = permute(key, pc1_bin, 56);
-//    grid_compare(perm_key, str_pc1);
-    return 0;
-}
+    generate_keys(bin_key, bin_round_keys);
+    generate_keys(str_key, str_round_keys);
 
-void grid_compare_testing(){
-    uint64_t key =                 0b0101010001100101011100110111010000110001001100100011001100110100;
-    string str_key =                "0101010001100101011100110111010000110001001100100011001100110100";
-    string str_short_key =                          "011100110111010000110001111100100011001100110100";
-    grid_compare(key, str_key);
-    grid_compare(key, str_short_key);
+
+
+
+    return 0;
 }

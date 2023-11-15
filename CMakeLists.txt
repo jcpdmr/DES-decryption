@@ -7,4 +7,6 @@ add_executable(DES_decryption main.cpp
         common.h
         common.cpp
         utility.cpp
-        utility.h)
+        utility.h
+        testing.cpp
+        testing.h)

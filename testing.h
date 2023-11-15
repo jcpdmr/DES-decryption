@@ -1,0 +1,6 @@
+#ifndef DES_DECRYPTION_TESTING_H
+#define DES_DECRYPTION_TESTING_H
+
+#include "utility.h"
+
+#endif //DES_DECRYPTION_TESTING_H
