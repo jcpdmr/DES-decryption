@@ -11,8 +11,10 @@ extern const int initial_permutation[64];
 extern const int initial_permutation_bin[64];
 
 extern const int expansion_table[48];
+extern const int expansion_table_bin[48];
 
 extern const int substitution_boxes[8][4][16];
+extern const unsigned long long substitution_boxes_bin[8][4][16];
 
 extern const int permutation_tab[32];
 

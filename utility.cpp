@@ -253,6 +253,45 @@ string Xor(string a, string b){
     return result;
 }
 
+uint64_t encrypt(const uint64_t& plain_text, const uint64_t (&round_keys)[16]){
+    uint64_t perm, left, right;
+    perm = permute(plain_text, initial_permutation_bin, 64);
+    split(perm, left, right, 32);
+    for(int round = 0; round < 16; round++) {
+        uint64_t right_exp;
+        right_exp = permute(right, expansion_table_bin, 48);
+        // xored is 48 bits
+        uint64_t xored = Xor(round_keys[round], right_exp);
+        uint64_t res = 0;
+        for(int j = 8; j > 0; j--){
+            uint64_t row, col, temp;
+            // To get row we need bits 5 and 0, and OR them to form 5 0
+            row = ((xored >> ((j * 6) - 6)) & 0b1) | ((xored >> ((j * 6) - 2) & 0b10));
+            // To get col we need bits 4,3,2,1
+            col = (xored >> ((j * 6) - 5)) & 0b1111;
+            temp = substitution_boxes_bin[8 - j][row][col];
+            res |= ((substitution_boxes_bin[8 - j][row][col]) << ((j * 4) - 4));
+
+            cout << "Iter j: " << j << "   S-box: " << (8 - j) + 1 << endl;
+            cout << "Row: " << row + 1 << "   Col: " << col + 1 << "    Temp: " << temp <<  "   Temp bin: " << std::bitset<4>(temp) <<endl;
+            grid();
+            grid_bin(temp);
+            grid_bin(res);
+            cout << endl;
+        }
+    }
+
+//    for(int j = 0; j < 8; j++){
+//        string row1 = xored.substr(j * 6,1) + xored.substr(j * 6 + 5,1);
+//        int row = convertBinaryToDecimal(row1);
+//        string col1 = xored.substr(j * 6 + 1,1) + xored.substr(j * 6 + 2,1) + xored.substr(j * 6 + 3,1) + xored.substr(j * 6 + 4,1);
+//        int col = convertBinaryToDecimal(col1);
+//        int val = substitution_boxes[j][row][col];
+//        res += convertDecimalToBinary(val);
+//    }
+
+}
+
 string encrypt(string &plain_text, string (&round_keys)[16]) {
     string perm;
     for(int i : initial_permutation){
