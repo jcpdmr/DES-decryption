@@ -22,5 +22,6 @@ extern const int permutation_tab[32];
 extern const int permutation_tab_bin[32];
 
 extern const int inverse_permutation[64];
+extern const int inverse_permutation_bin[64];
 
 #endif //DES_DECRYPTION_COMMON_H

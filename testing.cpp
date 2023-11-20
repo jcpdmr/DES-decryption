@@ -73,11 +73,6 @@ void encrypt_testing(){
     generate_keys(bin_key, bin_round_keys);
     generate_keys(str_key, str_round_keys);
 
-    uint64_t bin_results[16];
-    uint64_t bin_xoreds[16];
-    string str_results[16];
-    string str_xoreds[16];
-
     generate_keys(bin_key, bin_round_keys);
     generate_keys(str_key, str_round_keys);
 
@@ -112,8 +107,8 @@ void encrypt_testing(){
 
 
         // Expansion and Xor
-        uint64_t bin_right_expanded = 0;
-        uint64_t bin_xored = 0;
+        uint64_t bin_right_expanded;
+        uint64_t bin_xored;
         bin_right_expanded = permute(bin_right, expansion_table_bin, 48);
         bin_xored = Xor(bin_round_keys[round], bin_right_expanded);
         // -----------------------
@@ -123,9 +118,8 @@ void encrypt_testing(){
         }
         string str_xored = Xor(str_round_keys[round], str_right_expanded);
 
-        cout << "ROUND: " << round << "   Expansion and Xor" <<endl;
-        grid_compare(bin_xored, str_xored);
-       // 010100 001011 000101 010011 000100 100111 010010 100100
+//        cout << "ROUND: " << round << "   Expansion and Xor" <<endl;
+//        grid_compare(bin_xored, str_xored);
 
 
 
@@ -155,13 +149,13 @@ void encrypt_testing(){
 //            grid_compare(bin_val, str_val);
 //            cout << endl;
         }
-        cout << "ROUND: " << round  << "   After S-box"<< endl;
-        grid_compare(bin_res, str_res);
-        cout << endl;
+//        cout << "ROUND: " << round  << "   After S-box"<< endl;
+//        grid_compare(bin_res, str_res);
+//        cout << endl;
 
         // Second permutation
-        uint64_t bin_perm2 = 0;
-        permute(bin_res, permutation_tab_bin, 32);
+        uint64_t bin_perm2;
+        bin_perm2 = permute(bin_res, permutation_tab_bin, 32);
         bin_xored = Xor(bin_perm2, bin_left);
         bin_left = bin_xored;
         // -----------------
@@ -172,9 +166,10 @@ void encrypt_testing(){
         str_xored = Xor(str_perm2, str_left);
         str_left = str_xored;
 
-        cout << "ROUND: " << round  << "   After second permutation"<< endl;
-        grid_compare(bin_res, str_res);
-        cout << endl;
+//        cout << "ROUND: " << round  << "   After second permutation"<< endl;
+//        grid_compare(bin_res, str_res);
+//        cout << endl;
+
 
         // Special swap
         if(round < 15){
@@ -188,6 +183,29 @@ void encrypt_testing(){
         }
     }
 
+
+
+    // Merge
+    uint64_t bin_combined_text = merge(bin_left, bin_right, 32);
+    // -----------
+    string str_combined_text = str_left + str_right;
+
+    cout << "After merge " << endl;
+    grid_compare(bin_combined_text, str_combined_text);
+    cout << endl;
+    // 1110 1110 0101 0111 0110 1101 1101 1010 0100 1110 0101 0111 0110 0101 0110 1101
+
+
+    // Inverse Permutation
+    uint64_t bin_ciphertext;
+    bin_ciphertext = permute(bin_combined_text, inverse_permutation_bin, 64);
+    // ----------------
+    string str_ciphertext;
+    for(int i = 0; i < 64; i++){
+        str_ciphertext+= str_combined_text[inverse_permutation[i]-1];
+    }
+
+    grid_compare(bin_ciphertext, str_ciphertext);
 
 }
 

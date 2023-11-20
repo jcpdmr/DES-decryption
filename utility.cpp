@@ -361,6 +361,8 @@ string encrypt(string &plain_text, string (&round_keys)[16], string (&xoreds)[16
             left = temp;
         }
     }
+
+
 //    string combined_text = left + right;
 //    string ciphertext;
 //    for(int i : inverse_permutation){
