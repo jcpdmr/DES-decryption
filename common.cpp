@@ -1,6 +1,5 @@
-#include <cstdint>
-
-int pc1[56] = {
+#include "common.h"
+const int pc1[56] = {
         57,49,41,33,25,17,9,
         1,58,50,42,34,26,18,
         10,2,59,51,43,35,27,
@@ -11,7 +10,7 @@ int pc1[56] = {
         21,13,5,28,20,12,4
 };
 
-int pc1_bin[56] = { // Obtained subtracting 64 from numbers in pc1
+const int pc1_bin[56] = { // Obtained subtracting 64 from numbers in pc1
          7, 15, 23, 31, 39, 47, 55,
         63,  6, 14, 22, 30, 38, 46,
         54, 62,  5, 13, 21, 29, 37,
@@ -23,7 +22,7 @@ int pc1_bin[56] = { // Obtained subtracting 64 from numbers in pc1
 
 };
 
-int pc2[48] = {
+const int pc2[48] = {
         14,17,11,24,1,5,
         3,28,15,6,21,10,
         23,19,12,4,26,8,
@@ -34,7 +33,7 @@ int pc2[48] = {
         46,42,50,36,29,32
 };
 
-int pc2_bin[48] = { // Obtained subtracting 56 from numbers in pc1
+const int pc2_bin[48] = { // Obtained subtracting 56 from numbers in pc1
         42, 39, 45, 32, 55, 51,
         53, 28, 41, 50, 35, 46,
         33, 37, 44, 52, 30, 48,
@@ -45,7 +44,7 @@ int pc2_bin[48] = { // Obtained subtracting 56 from numbers in pc1
         10, 14, 6, 20, 27, 24
 };
 
-int initial_permutation[64] = {
+const int initial_permutation[64] = {
         58, 50, 42, 34, 26, 18, 10,  2,
         60, 52, 44, 36, 28, 20, 12,  4,
         62, 54, 46, 38, 30, 22, 14,  6,
@@ -56,7 +55,7 @@ int initial_permutation[64] = {
         63, 55, 47, 39, 31, 23, 15,  7
 };
 
-int initial_permutation_bin[64] = { // Obtained subtracting 64 from number in initial_permutation
+const int initial_permutation_bin[64] = { // Obtained subtracting 64 from number in initial_permutation
         6, 14, 22, 30, 38, 46, 54, 62,
         4,  12, 20, 28, 36, 44, 52, 60,
         2,  10, 18, 26, 34, 42, 50, 58,
@@ -67,7 +66,7 @@ int initial_permutation_bin[64] = { // Obtained subtracting 64 from number in in
         1,   9, 17, 25, 33, 41, 49, 57
 };
 
-int expansion_table[48] = {
+const int expansion_table[48] = {
         32,1,2,3,4,5,4,5,
         6,7,8,9,8,9,10,11,
         12,13,12,13,14,15,16,17,
@@ -76,7 +75,7 @@ int expansion_table[48] = {
         28,29,28,29,30,31,32,1
 };
 
-int expansion_table_bin[48] = { // Obtained subtracting 32 from number in expansion_table
+const int expansion_table_bin[48] = { // Obtained subtracting 32 from number in expansion_table
         0, 31, 30, 29, 28, 27, 28, 27,
         26, 25, 24, 23, 24, 23, 22, 21,
         20, 19, 20, 19, 18, 17, 16, 15,
@@ -85,7 +84,7 @@ int expansion_table_bin[48] = { // Obtained subtracting 32 from number in expans
         4,  3,  4,  3,  2,  1,  0, 31
 };
 
-int substitution_boxes[8][4][16]=
+const int substitution_boxes[8][4][16]=
         {{
                  14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7,
                  0,15,7,4,14,2,13,1,10,6,12,11,9,5,3,8,
@@ -135,7 +134,7 @@ int substitution_boxes[8][4][16]=
                  2,1,14,7,4,10,8,13,15,12,9,0,3,5,6,11
          }};
 
-uint64_t substitution_boxes_bin[8][4][16]=
+const uint64_t substitution_boxes_bin[8][4][16]=
         {{
                  14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7,
                  0,15,7,4,14,2,13,1,10,6,12,11,9,5,3,8,
@@ -185,14 +184,21 @@ uint64_t substitution_boxes_bin[8][4][16]=
                  2,1,14,7,4,10,8,13,15,12,9,0,3,5,6,11
          }};
 
-int permutation_tab[32] = {
+const int permutation_tab[32] = {
         16,7,20,21,29,12,28,17,
         1,15,23,26,5,18,31,10,
         2,8,24,14,32,27,3,9,
         19,13,30,6,22,11,4,25
 };
 
-int inverse_permutation[64]= {
+const int permutation_tab_bin[32] = { // Obtained subtracting 32 from number in initial_permutation
+        16, 25, 12, 11, 3, 20, 4, 15,
+        31, 17, 9, 6, 27, 14, 1, 22,
+        30, 24, 8, 18, 0, 5, 29, 23,
+        13, 19, 2, 26, 10, 21, 28, 7
+};
+
+const int inverse_permutation[64]= {
         40,8,48,16,56,24,64,32,
         39,7,47,15,55,23,63,31,
         38,6,46,14,54,22,62,30,

@@ -253,31 +253,39 @@ string Xor(string a, string b){
     return result;
 }
 
-uint64_t encrypt(const uint64_t& plain_text, const uint64_t (&round_keys)[16]){
+uint64_t encrypt(const uint64_t& plain_text, const uint64_t (&round_keys)[16], uint64_t (&xoreds)[16], uint64_t (&results)[16]){
     uint64_t perm, left, right;
     perm = permute(plain_text, initial_permutation_bin, 64);
+
     split(perm, left, right, 32);
-    for(int round = 0; round < 16; round++) {
+    for(int round = 0; round < 1; round++) {
+
         uint64_t right_exp;
         right_exp = permute(right, expansion_table_bin, 48);
         // xored is 48 bits
         uint64_t xored = Xor(round_keys[round], right_exp);
+
+        xoreds[round] = xored;// Debug
+
         uint64_t res = 0;
         for(int j = 8; j > 0; j--){
-            uint64_t row, col, temp;
+            uint64_t row, col;
             // To get row we need bits 5 and 0, and OR them to form 5 0
             row = ((xored >> ((j * 6) - 6)) & 0b1) | ((xored >> ((j * 6) - 2) & 0b10));
             // To get col we need bits 4,3,2,1
             col = (xored >> ((j * 6) - 5)) & 0b1111;
-            temp = substitution_boxes_bin[8 - j][row][col];
-            res |= ((substitution_boxes_bin[8 - j][row][col]) << ((j * 4) - 4));
 
-            cout << "Iter j: " << j << "   S-box: " << (8 - j) + 1 << endl;
-            cout << "Row: " << row + 1 << "   Col: " << col + 1 << "    Temp: " << temp <<  "   Temp bin: " << std::bitset<4>(temp) <<endl;
-            grid();
-            grid_bin(temp);
-            grid_bin(res);
-            cout << endl;
+            res |= ((substitution_boxes_bin[8 - j][row][col]) << ((j * 4) - 4));
+        }
+        results[round] = res; // Debug
+        uint64_t perm2;
+        perm2 = permute(res, permutation_tab_bin, 32);
+        xored = Xor(perm2, left);
+        left = xored;
+        if(round < 15){
+            uint64_t temp = right;
+            right = xored;
+            left = temp;
         }
     }
 
@@ -289,23 +297,46 @@ uint64_t encrypt(const uint64_t& plain_text, const uint64_t (&round_keys)[16]){
 //        int val = substitution_boxes[j][row][col];
 //        res += convertDecimalToBinary(val);
 //    }
+//    string perm2;
+//    for(int j : permutation_tab){
+//        perm2 += res[j-1];
+//    }
+//    xored = Xor(perm2, left);
+//    left = xored;
+//    if(round < 15){
+//        string temp = right;
+//        right = xored;
+//        left = temp;
+//    }
+//}
+//string combined_text = left + right;
+//string ciphertext;
+//for(int i : inverse_permutation){
+//ciphertext+= combined_text[i-1];
+//}
+//return ciphertext;
 
 }
 
-string encrypt(string &plain_text, string (&round_keys)[16]) {
+string encrypt(string &plain_text, string (&round_keys)[16], string (&xoreds)[16], string (&results)[16]){
     string perm;
     for(int i : initial_permutation){
         perm += plain_text[i - 1];
     }
+
     string left = perm.substr(0, 32);
     string right = perm.substr(32, 32);
 
-    for(int round = 0; round < 16; round++) {
+
+    for(int round = 0; round < 1; round++) {
         string right_expanded;
         for(int j : expansion_table) {
             right_expanded += right[j-1];
         }
         string xored = Xor(round_keys[round], right_expanded);
+
+        xoreds[round] = xored; // Debug
+
         string res;
         for(int j = 0; j < 8; j++){
             string row1 = xored.substr(j * 6,1) + xored.substr(j * 6 + 5,1);
@@ -315,6 +346,9 @@ string encrypt(string &plain_text, string (&round_keys)[16]) {
             int val = substitution_boxes[j][row][col];
             res += convertDecimalToBinary(val);
         }
+
+        results[round] = res; // Debug
+
         string perm2;
         for(int j : permutation_tab){
             perm2 += res[j-1];
@@ -327,10 +361,21 @@ string encrypt(string &plain_text, string (&round_keys)[16]) {
             left = temp;
         }
     }
-    string combined_text = left + right;
-    string ciphertext;
-    for(int i : inverse_permutation){
-        ciphertext+= combined_text[i-1];
-    }
-    return ciphertext;
+//    string combined_text = left + right;
+//    string ciphertext;
+//    for(int i : inverse_permutation){
+//        ciphertext+= combined_text[i-1];
+//    }
+//    return ciphertext;
+}
+
+uint64_t swap_bits(uint64_t a) {
+    // Method 1
+    // Get bit 3 and put in position 0 : (a & (1ULL << 3)) >> 3)
+    // Get bit 0 and put in position 3 : ((a & 1ULL) << 3)
+    // Get bit 2 and put in position 1 : ((a & (1ULL << 2)) >> 1)
+    // Get bit 1 and put in position 2 : ((a & (1ULL << 1)) << 1)
+     uint64_t b = ((a & (1ULL << 3)) >> 3) | ((a & 1ULL) << 3) | ((a & (1ULL << 2)) >> 1) | ((a & (1ULL << 1)) << 1);
+
+    return b;
 }

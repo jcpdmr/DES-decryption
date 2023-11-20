@@ -1,5 +1,7 @@
 #include <iostream>
 #include "utility.h"
+#include "testing.h"
+
 
 //int main(){
 //    // Key is "Test1234"
@@ -43,36 +45,35 @@ int main(){
     uint64_t bin_round_keys[16];
     string str_round_keys[16];
 
-
-    // Testing string                 |                           |
-    string str_pc1 =                 "00000000000011111111111011110110010010001011000000001101";
-    //                                | <- left shift rotate
-    string str_c0 =                  "0000000000001111111111101111";
-    string str_c1 =                  "0000000000011111111111011110";
-    string str_c2 =                  "0000000000111111111110111100";
-    //                                                             | <- left shift rotate
-    string str_d0 =                                               "0110010010001011000000001101";
-    string str_d1 =                                               "1100100100010110000000011010";
-    string str_d2 =                                               "1001001000101100000000110101";
-
     generate_keys(bin_key, bin_round_keys);
     generate_keys(str_key, str_round_keys);
 
-    string perm;
-    for(int i : initial_permutation){
-        perm += str_plain_text[i - 1];
-    }
-    string left = perm.substr(0, 32);
-    string right = perm.substr(32, 32);
+    uint64_t bin_results[16];
+    uint64_t bin_xoreds[16];
+    string str_results[16];
+    string str_xoreds[16];
 
+//    swap_bits_testing();
+    encrypt_testing();
 
-    string right_expanded;
-    for(int j : expansion_table) {
-        right_expanded += right[j - 1];
-    }
+//    encrypt(str_plain_text, str_round_keys, str_xoreds, str_results);
+//
+//    uint64_t bin_perm;
+//    bin_perm = encrypt(bin_plain_text, bin_round_keys, bin_xoreds, bin_results);
+//
+//    for(int round = 0; round < 1; round++){
+//        cout << "ROUND: " << round << endl;
+//        grid();
+//        grid_compare(bin_xoreds[round], str_xoreds[round]);
+//        grid_compare(bin_results[round], str_results[round]);
 
-    uint64_t bin_perm;
-    bin_perm = encrypt(bin_plain_text, bin_round_keys);
+//    }
+//    for(int round = 0; round < 16; round++){
+//        cout << "ROUND: " << round << endl;
+//        grid();
+//        grid_compare(bin_results[round], str_results[round]);
+//    }
+
 
 //    grid_compare(bin_perm, right_expanded);
 

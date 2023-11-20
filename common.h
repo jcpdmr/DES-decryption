@@ -1,6 +1,8 @@
 #ifndef DES_DECRYPTION_COMMON_H
 #define DES_DECRYPTION_COMMON_H
 
+#include <cstdint>
+
 extern const int pc1[56];
 extern const int pc1_bin[56];
 
@@ -14,9 +16,10 @@ extern const int expansion_table[48];
 extern const int expansion_table_bin[48];
 
 extern const int substitution_boxes[8][4][16];
-extern const unsigned long long substitution_boxes_bin[8][4][16];
+extern const uint64_t substitution_boxes_bin[8][4][16];
 
 extern const int permutation_tab[32];
+extern const int permutation_tab_bin[32];
 
 extern const int inverse_permutation[64];
 
