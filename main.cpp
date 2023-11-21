@@ -1,12 +1,11 @@
 #include <iostream>
 #include "utility.h"
-#include <iomanip>
 
 int main(){
     // Key is "Test1234"
     string key = "0101010001100101011100110111010000110001001100100011001100110100";
 
-    // Plain text is "Ciaociao" converted in ASCII
+    // Plain text converted in ASCII
     string plain_text = "0100001101101001011000010110111101100011011010010110000101101111";
 
     string round_keys[16];

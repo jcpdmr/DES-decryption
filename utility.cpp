@@ -35,8 +35,8 @@ string shift_left_twice(string key_chunk){
 
 void generate_keys(string key, string(&round_keys)[16]){
     string perm_key;
-    for(int i = 0; i < 56; i++){
-        perm_key+= key[pc1[i]-1];
+    for(int i : pc1){
+        perm_key+= key[i-1];
     }
     string left= perm_key.substr(0, 28);
     string right= perm_key.substr(28, 28);
@@ -51,8 +51,8 @@ void generate_keys(string key, string(&round_keys)[16]){
         }
         string combined_key = left + right;
         string round_key;
-        for(int j = 0; j < 48; j++){
-            round_key += combined_key[pc2[j]-1];
+        for(int j : pc2){
+            round_key += combined_key[j-1];
         }
         round_keys[n_key] = round_key;
         // std::cout<<"Key "<<i+1<<": "<<round_keys[i]<<endl;
@@ -61,35 +61,19 @@ void generate_keys(string key, string(&round_keys)[16]){
 
 string convertDecimalToBinary(int decimal)
 {
-    string binary;
-    while(decimal != 0) {
-        binary = (decimal % 2 == 0 ? "0" : "1") + binary;
-        decimal = decimal/2;
-    }
-    while(binary.length() < 4){
-        binary = "0" + binary;
-    }
+    string binary = ((bitset<4>) decimal).to_string();
     return binary;
 }
 
-int convertBinaryToDecimal(string binary)
+int convertBinaryToDecimal(const string& binary)
 {
-    int decimal = 0;
-    int counter = 0;
-    int size = binary.length();
-    for(int i = size-1; i >= 0; i--)
-    {
-        if(binary[i] == '1'){
-            decimal += pow(2, counter);
-        }
-        counter++;
-    }
+    int decimal = (int)((bitset<4>) binary).to_ulong();
     return decimal;
 }
 
 string Xor(string a, string b){
     string result;
-    int size = b.size();
+    int size = (int)b.size();
     for(int i = 0; i < size; i++){
         if(a[i] != b[i]){
             result += "1";
@@ -103,16 +87,16 @@ string Xor(string a, string b){
 
 string encrypt(string &plain_text, string (&round_keys)[16]) {
     string perm;
-    for(int i = 0; i < 64; i++){
-        perm += plain_text[initial_permutation[i] - 1];
+    for(int i : initial_permutation){
+        perm += plain_text[i - 1];
     }
     string left = perm.substr(0, 32);
     string right = perm.substr(32, 32);
 
     for(int round = 0; round < 16; round++) {
         string right_expanded;
-        for(int j = 0; j < 48; j++) {
-            right_expanded += right[expansion_table[j]-1];
+        for(int j : expansion_table) {
+            right_expanded += right[j-1];
         }
         string xored = Xor(round_keys[round], right_expanded);
         string res;
@@ -125,8 +109,8 @@ string encrypt(string &plain_text, string (&round_keys)[16]) {
             res += convertDecimalToBinary(val);
         }
         string perm2;
-        for(int j = 0; j < 32; j++){
-            perm2 += res[permutation_tab[j]-1];
+        for(int j : permutation_tab){
+            perm2 += res[j-1];
         }
         xored = Xor(perm2, left);
         left = xored;
@@ -138,8 +122,8 @@ string encrypt(string &plain_text, string (&round_keys)[16]) {
     }
     string combined_text = left + right;
     string ciphertext;
-    for(int i = 0; i < 64; i++){
-        ciphertext+= combined_text[inverse_permutation[i]-1];
+    for(int i : inverse_permutation){
+        ciphertext+= combined_text[i-1];
     }
     return ciphertext;
 }
