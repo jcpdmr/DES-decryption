@@ -10,7 +10,7 @@ using namespace std;
 //    return perm_string;
 //}
 
-uint64_t permute(const uint64_t &key, const int* pattern, const int n) {
+inline uint64_t permute(const uint64_t &key, const int* pattern, const int n) {
     uint64_t perm_key = 0;
     for(int i = 0; i < n; i++){
         // ((key >> pattern[i]) & 1) check if the bit of key in position 7, 15, 23, ... from
@@ -95,7 +95,7 @@ string shift_left_once(string key_chunk){
     return shifted;
 }
 
-uint64_t shift_left(const uint64_t bin_key, const bool shift_twice){
+inline uint64_t shift_left(const uint64_t bin_key, const bool shift_twice){
     // The key has 28 bits
     uint64_t shifted_key;
     // Shift first time
@@ -127,7 +127,7 @@ void split(const uint64_t &key, uint64_t &left, uint64_t&right, int bit_len_of_b
     right = key & ((1ULL << bit_len_of_block) - 1);
 }
 
-uint64_t merge(uint64_t &left, uint64_t&right, const int bit_len_of_block){
+inline uint64_t merge(uint64_t &left, uint64_t&right, const int bit_len_of_block){
     uint64_t merged_key;
     merged_key = (left << bit_len_of_block) | right;
     return merged_key;
@@ -158,6 +158,31 @@ void generate_keys(uint64_t key, uint64_t(&round_keys)[16]){
     }
 }
 
+void generate_inv_keys(uint64_t key, uint64_t(&inv_round_keys)[16]){
+    // key is 64 bit, perm_key is 56 bit
+    uint64_t perm_key, left, right;
+    perm_key = permute(key, pc1_bin, 56);
+
+    split(perm_key, left, right, 28);
+    for(int n_key = 0; n_key < 16; n_key++){
+        if(n_key == 0 || n_key == 1 || n_key == 8 || n_key == 15 ){
+            left = shift_left(left);
+            right = shift_left(right);
+        }
+        else{
+            left = shift_left(left, true);
+            right = shift_left(right, true);
+        }
+        uint64_t combined_key = merge(left, right, 28);
+        uint64_t round_key;
+
+        round_key = permute(combined_key, pc2_bin, 48);
+
+        // Add the key to the round keys array, starting from the last to get them in inverted order
+        inv_round_keys[15 - n_key] = round_key;
+    }
+}
+
 void generate_keys(string key, string(&round_keys)[16]){
     string perm_key;
     for(int i : pc1){
@@ -180,7 +205,31 @@ void generate_keys(string key, string(&round_keys)[16]){
             round_key += combined_key[j-1];
         }
         round_keys[n_key] = round_key;
-        // std::cout<<"Key "<<i+1<<": "<<round_keys[i]<<endl;
+    }
+}
+
+void generate_inv_keys(string key, string(&round_keys)[16]){
+    string perm_key;
+    for(int i : pc1){
+        perm_key+= key[i-1];
+    }
+    string left= perm_key.substr(0, 28);
+    string right= perm_key.substr(28, 28);
+    for(int n_key = 0; n_key < 16; n_key++){
+        if(n_key == 0 || n_key == 1 || n_key==8 || n_key==15 ){
+            left= shift_left_once(left);
+            right= shift_left_once(right);
+        }
+        else{
+            left= shift_left_twice(left);
+            right= shift_left_twice(right);
+        }
+        string combined_key = left + right;
+        string round_key;
+        for(int j : pc2){
+            round_key += combined_key[j-1];
+        }
+        round_keys[15 - n_key] = round_key;
     }
 }
 
@@ -196,7 +245,7 @@ int convertBinaryToDecimal(const string& binary)
     return decimal;
 }
 
-uint64_t Xor(const uint64_t& a, const uint64_t& b){
+inline uint64_t Xor(const uint64_t& a, const uint64_t& b){
     uint64_t xor_result;
     xor_result = a ^ b;
     return xor_result;

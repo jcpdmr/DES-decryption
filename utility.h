@@ -14,6 +14,9 @@ using namespace std;
 void generate_keys(string key, string(&round_keys)[16]);
 void generate_keys(uint64_t key, uint64_t(&round_keys)[16]);
 
+void generate_inv_keys(uint64_t key, uint64_t(&inv_round_keys)[16]);
+void generate_inv_keys(string key, string(&round_keys)[16]);
+
 string shift_left_once(string key_chunk);
 string shift_left_twice(string key_chunk);
 uint64_t shift_left(uint64_t bin_key, bool shift_twice = false);

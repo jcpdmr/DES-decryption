@@ -3,6 +3,8 @@ project(DES_decryption)
 
 set(CMAKE_CXX_STANDARD 14)
 
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-fopenmp")
+
 add_executable(DES_decryption main.cpp
         common.h
         common.cpp
