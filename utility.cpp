@@ -162,6 +162,8 @@ void generate_keys(string key, string(&round_keys)[16]){
     string perm_key;
     for(int i : pc1){
         perm_key+= key[i-1];
+    for(int i : pc1){
+        perm_key+= key[i-1];
     }
     string left= perm_key.substr(0, 28);
     string right= perm_key.substr(28, 28);
@@ -178,6 +180,8 @@ void generate_keys(string key, string(&round_keys)[16]){
         string round_key;
         for(int j : pc2){
             round_key += combined_key[j-1];
+        for(int j : pc2){
+            round_key += combined_key[j-1];
         }
         round_keys[n_key] = round_key;
         // std::cout<<"Key "<<i+1<<": "<<round_keys[i]<<endl;
@@ -187,11 +191,14 @@ void generate_keys(string key, string(&round_keys)[16]){
 string convertDecimalToBinary(int decimal)
 {
     string binary = ((bitset<4>) decimal).to_string();
+    string binary = ((bitset<4>) decimal).to_string();
     return binary;
 }
 
 int convertBinaryToDecimal(const string& binary)
+int convertBinaryToDecimal(const string& binary)
 {
+    int decimal = (int)((bitset<4>) binary).to_ulong();
     int decimal = (int)((bitset<4>) binary).to_ulong();
     return decimal;
 }
@@ -270,12 +277,16 @@ string encrypt(string &plain_text, string (&round_keys)[16]) {
     string perm;
     for(int i : initial_permutation){
         perm += plain_text[i - 1];
+    for(int i : initial_permutation){
+        perm += plain_text[i - 1];
     }
     string left = perm.substr(0, 32);
     string right = perm.substr(32, 32);
 
     for(int round = 0; round < 16; round++) {
         string right_expanded;
+        for(int j : expansion_table) {
+            right_expanded += right[j-1];
         for(int j : expansion_table) {
             right_expanded += right[j-1];
         }
@@ -292,6 +303,8 @@ string encrypt(string &plain_text, string (&round_keys)[16]) {
         string perm2;
         for(int j : permutation_tab){
             perm2 += res[j-1];
+        for(int j : permutation_tab){
+            perm2 += res[j-1];
         }
         xored = Xor(perm2, left);
         left = xored;
@@ -303,6 +316,8 @@ string encrypt(string &plain_text, string (&round_keys)[16]) {
     }
     string combined_text = left + right;
     string ciphertext;
+    for(int i : inverse_permutation){
+        ciphertext+= combined_text[i-1];
     for(int i : inverse_permutation){
         ciphertext+= combined_text[i-1];
     }
