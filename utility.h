@@ -24,8 +24,8 @@ int convertBinaryToDecimal(string binary);
 string Xor(string a, string b);
 uint64_t Xor(const uint64_t& a, const uint64_t& b);
 
-string encrypt(string &plain_text, string (&round_keys)[16], string (&xoreds)[16], string (&results)[16]);
-uint64_t encrypt(const uint64_t& plain_text, const uint64_t (&round_keys)[16], uint64_t (&xoreds)[16], uint64_t (&results)[16]);
+string encrypt(string &plain_text, string (&round_keys)[16]);
+uint64_t encrypt(const uint64_t& plain_text, const uint64_t (&round_keys)[16]);
 
 void split(const uint64_t &key, uint64_t &left, uint64_t&right, int bit_len_of_block);
 uint64_t merge(uint64_t &left, uint64_t&right, int bit_len_of_block);
@@ -38,7 +38,6 @@ void grid_compare(uint64_t& bin_val, string& str_val);
 
 uint64_t swap_bits(uint64_t a);
 
-void printBinaryWithSpaces(uint64_t value, int bitsPerGroup);
 // TODO: add a password to bin to convert a text password in a string of binary number
 
 #endif //DES_DECRYPTION_UTILITY_H

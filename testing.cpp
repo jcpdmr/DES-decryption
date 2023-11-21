@@ -1,5 +1,58 @@
 #include "testing.h"
 
+// Testing variables created using 0101010001100101011100110111010000110001001100100011001100110100 as key
+// and 0100001101101001011000010110111101100011011010010110000101101111 as plain text
+
+string test_round_keys[16] = {
+        "110100001010011010101110010001110010000001010110", // Key 01
+        "111100001010111010100110110000001000001100010011", // Key 02
+        "111100001011111000100010010101110010011000001000", // Key 03
+        "111000001011011001110110011110000001000101001000", // Key 04
+        "111001001101011001010110000000001111000000101110", // Key 05
+        "011001101101001101110010011001000011110010100000", // Key 06
+        "101011101101000101110011101010000000100001111011", // Key 07
+        "101011110100001101011011000001111101101000010010", // Key 08
+        "001011110101001111011011100010000000101100001010", // Key 09
+        "001111110101000111001001110101000101001000010100", // Key 10
+        "000110110100100111011001010100010000001011101000", // Key 11
+        "000111010110100110011101100100001011100000001001", // Key 12
+        "000101110010110110001101001000100011011000110100", // Key 13
+        "010110110010110010100101001110010010100110100010", // Key 14
+        "110110011010110010101100001001000100100000010011", // Key 15
+        "110000011010110010101110101100100000100111000000" // Key 16
+};
+
+
+string msg_after_IP =   "1111111100000000100010001111111100000000111111101010101010011001";
+
+string l0 =                                             "11111111000000001000100011111111";
+string r0 =                                             "00000000111111101010101010011001";
+string exp_r0 =                         "100000000001011111111101010101010101010011110010";
+string k0_xored_ex_r0 =                 "010100001011000101010011000100100111010010100100";
+string sub_k0_xored_ex_r0 =                             "01100010000001110100110011000100";
+string per_sub_k0_xored_ex_r0 =                         "11010000010101001001001000101001";
+
+string l1 =                                             "00000000111111101010101010011001";
+string r1 =                                             "00101111010101000001101011010110";
+
+string l2 =                                             "00101111010101000001101011010110";
+string r2 =                                             "01111111001010001010010001011001";
+
+string l3 =                                             "01111111001010001010010001011001";
+string r3 =                                             "01111000010100111110010101001010";
+
+string l15 =                                            "00111010100111100111110101001000";
+string r15 =                                            "01001110010101110110010101101101";
+
+string l16 =                                            "01001110010101110110010101101101";
+string r16 =                                            "11101110010101110110110111011010";
+
+string merged =         "1110111001010111011011011101101001001110010101110110010101101101";
+
+string msg_aft_inv_IP = "0011111011110001111111101100011100110001010011101111111101000001";
+
+string test_ciphertxt = "0011111011110001111111101100011100110001010011101111111101000001";
+
 void grid_compare_testing(){
     uint64_t key =                 0b0101010001100101011100110111010000110001001100100011001100110100;
     string str_key =                "0101010001100101011100110111010000110001001100100011001100110100";
@@ -19,6 +72,10 @@ void generate_keys_testing(){
     for(int i = 0; i < 16; i++){
         grid_compare(bin_round_keys[i], str_round_keys[i]);
     }
+    for(int i = 0; i < 16; i++){
+        grid_compare(bin_round_keys[i], test_round_keys[i]);
+    }
+
 }
 
 void xor_testing(){
@@ -73,9 +130,6 @@ void encrypt_testing(){
     generate_keys(bin_key, bin_round_keys);
     generate_keys(str_key, str_round_keys);
 
-    generate_keys(bin_key, bin_round_keys);
-    generate_keys(str_key, str_round_keys);
-
     // Main encryption algorithm
 
     // Initial permutation
@@ -89,6 +143,7 @@ void encrypt_testing(){
 
 //    cout << "Initial perm " <<endl;
 //    grid_compare(bin_perm, str_perm);
+//    grid_compare(bin_perm, msg_after_IP);
 
 
 
@@ -99,6 +154,8 @@ void encrypt_testing(){
     str_left = str_perm.substr(0, 32);
     str_right = str_perm.substr(32, 32);
 //    cout << "Initial split " <<endl;
+//    grid_compare(bin_left, l0);
+//    grid_compare(bin_right, r0);
 //    grid_compare(bin_left, str_left);
 //    grid_compare(bin_right, str_right);
 
@@ -113,14 +170,16 @@ void encrypt_testing(){
         bin_xored = Xor(bin_round_keys[round], bin_right_expanded);
         // -----------------------
         string str_right_expanded;
-        for(int j : expansion_table) {
-            str_right_expanded += str_right[j-1];
+        for (int j: expansion_table) {
+            str_right_expanded += str_right[j - 1];
         }
         string str_xored = Xor(str_round_keys[round], str_right_expanded);
 
 //        cout << "ROUND: " << round << "   Expansion and Xor" <<endl;
+//        if (round == 0){
+//          grid_compare(bin_xored, k0_xored_ex_r0);
+//        }
 //        grid_compare(bin_xored, str_xored);
-
 
 
         // S-box
@@ -133,7 +192,7 @@ void encrypt_testing(){
             // To get bin_col we need bits 4,3,2,1
             bin_col = (bin_xored >> (((8 - j) * 6) - 5)) & 0b1111;
             uint64_t bin_val = substitution_boxes_bin[j][bin_row][bin_col];
-            bin_val = swap_bits(bin_val);
+//            bin_val = swap_bits(bin_val);
             bin_res |= ((bin_val) << (((8 - j) * 4) - 4));
             // ---------------------------
             string str_row1 = str_xored.substr(j * 6,1) + str_xored.substr(j * 6 + 5,1);
@@ -149,51 +208,72 @@ void encrypt_testing(){
 //            grid_compare(bin_val, str_val);
 //            cout << endl;
         }
-//        cout << "ROUND: " << round  << "   After S-box"<< endl;
-//        grid_compare(bin_res, str_res);
-//        cout << endl;
+        cout << "ROUND: " << round  << "   After S-box"<< endl;
+//        if(round == 0){
+//            grid_compare(bin_res, sub_k0_xored_ex_r0);
+//        }
+        grid_compare(bin_res, str_res);
+        cout << endl;
 
         // Second permutation
         uint64_t bin_perm2;
         bin_perm2 = permute(bin_res, permutation_tab_bin, 32);
-        bin_xored = Xor(bin_perm2, bin_left);
-        bin_left = bin_xored;
         // -----------------
         string str_perm2;
         for(int j : permutation_tab){
             str_perm2 += str_res[j-1];
         }
-        str_xored = Xor(str_perm2, str_left);
-        str_left = str_xored;
 
 //        cout << "ROUND: " << round  << "   After second permutation"<< endl;
+//        if(round == 0){
+//            grid_compare(bin_perm2, per_sub_k0_xored_ex_r0);
+//        }
 //        grid_compare(bin_res, str_res);
 //        cout << endl;
 
+        // Xor
+        bin_xored = Xor(bin_perm2, bin_left);
+        bin_left = bin_xored;
+        // ---------------
+        str_xored = Xor(str_perm2, str_left);
 
-        // Special swap
-        if(round < 15){
-            uint64_t bin_temp = bin_right;
-            bin_right = bin_xored;
-            bin_left = bin_temp;
-            // ----------------
-            string str_temp = str_right;
-            str_right = str_xored;
-            str_left = str_temp;
-        }
+        uint64_t bin_temp = bin_right;
+        bin_right = bin_xored;
+        bin_left = bin_temp;
+
+//        // Special swap
+//        if(round < 15){
+//
+//            // ----------------
+//            string str_temp = str_right;
+//            str_right = str_xored;
+//            str_left = str_temp;
+//        }
+
+//        cout << "ROUND: " << round  << "   After Xor"<< endl;
+//        if(round == 0) {
+//            grid_compare(bin_left, l1);
+//            grid_compare(bin_right, r1);
+//        }
+//        if(round == 15){
+//            grid_compare(bin_left, l16);
+//            grid_compare(bin_right, r16);
+//        }
+//        grid_compare(bin_res, str_res);
+//        cout << endl;
     }
 
 
 
     // Merge
-    uint64_t bin_combined_text = merge(bin_left, bin_right, 32);
+    uint64_t bin_combined_text = merge(bin_right, bin_left, 32);
     // -----------
     string str_combined_text = str_left + str_right;
 
-    cout << "After merge " << endl;
-    grid_compare(bin_combined_text, str_combined_text);
-    cout << endl;
-    // 1110 1110 0101 0111 0110 1101 1101 1010 0100 1110 0101 0111 0110 0101 0110 1101
+//    cout << "After merge " << endl;
+//    grid_compare(bin_combined_text, merged);
+//    grid_compare(bin_combined_text, str_combined_text);
+//    cout << endl;
 
 
     // Inverse Permutation
@@ -204,8 +284,10 @@ void encrypt_testing(){
     for(int i = 0; i < 64; i++){
         str_ciphertext+= str_combined_text[inverse_permutation[i]-1];
     }
+//    cout << "After inverse permutation " << endl;
+//    grid_compare(bin_ciphertext, test_ciphertxt);
+//    grid_compare(bin_ciphertext, str_ciphertext);
 
-    grid_compare(bin_ciphertext, str_ciphertext);
 
 }
 
