@@ -19,7 +19,7 @@ string shift_left_twice(string key_chunk);
 uint64_t shift_left(uint64_t bin_key, bool shift_twice = false);
 
 string convertDecimalToBinary(int decimal);
-int convertBinaryToDecimal(string binary);
+int convertBinaryToDecimal(const string& binary);
 
 string Xor(string a, string b);
 uint64_t Xor(const uint64_t& a, const uint64_t& b);

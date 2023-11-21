@@ -162,7 +162,6 @@ void encrypt_testing(){
 
     for(int round = 0; round < 16; round++) {
 
-
         // Expansion and Xor
         uint64_t bin_right_expanded;
         uint64_t bin_xored;
@@ -182,6 +181,7 @@ void encrypt_testing(){
 //        grid_compare(bin_xored, str_xored);
 
 
+
         // S-box
         uint64_t bin_res = 0;
         string str_res;
@@ -192,7 +192,6 @@ void encrypt_testing(){
             // To get bin_col we need bits 4,3,2,1
             bin_col = (bin_xored >> (((8 - j) * 6) - 5)) & 0b1111;
             uint64_t bin_val = substitution_boxes_bin[j][bin_row][bin_col];
-//            bin_val = swap_bits(bin_val);
             bin_res |= ((bin_val) << (((8 - j) * 4) - 4));
             // ---------------------------
             string str_row1 = str_xored.substr(j * 6,1) + str_xored.substr(j * 6 + 5,1);
@@ -208,12 +207,15 @@ void encrypt_testing(){
 //            grid_compare(bin_val, str_val);
 //            cout << endl;
         }
-        cout << "ROUND: " << round  << "   After S-box"<< endl;
+//        cout << "ROUND: " << round  << "   After S-box"<< endl;
 //        if(round == 0){
 //            grid_compare(bin_res, sub_k0_xored_ex_r0);
 //        }
-        grid_compare(bin_res, str_res);
-        cout << endl;
+//        grid_compare(bin_res, str_res);
+//        cout << endl;
+
+
+
 
         // Second permutation
         uint64_t bin_perm2;
@@ -231,26 +233,34 @@ void encrypt_testing(){
 //        grid_compare(bin_res, str_res);
 //        cout << endl;
 
+
+
         // Xor
         bin_xored = Xor(bin_perm2, bin_left);
         bin_left = bin_xored;
         // ---------------
         str_xored = Xor(str_perm2, str_left);
 
+//        cout << "ROUND: " << round  << "   After xor"<< endl;
+//        if(round == 0){
+//            grid_compare(bin_perm2, per_sub_k0_xored_ex_r0);
+//        }
+//        grid_compare(bin_xored, str_xored);
+//        cout << endl;
+
+
+
+        // Assignment L and R
         uint64_t bin_temp = bin_right;
         bin_right = bin_xored;
         bin_left = bin_temp;
+        // --------------
+        string str_temp = str_right;
+        str_right = str_xored;
+        str_left = str_temp;
 
-//        // Special swap
-//        if(round < 15){
-//
-//            // ----------------
-//            string str_temp = str_right;
-//            str_right = str_xored;
-//            str_left = str_temp;
-//        }
 
-//        cout << "ROUND: " << round  << "   After Xor"<< endl;
+//        cout << "ROUND: " << round  << "   After assignment L and R"<< endl;
 //        if(round == 0) {
 //            grid_compare(bin_left, l1);
 //            grid_compare(bin_right, r1);
@@ -259,7 +269,8 @@ void encrypt_testing(){
 //            grid_compare(bin_left, l16);
 //            grid_compare(bin_right, r16);
 //        }
-//        grid_compare(bin_res, str_res);
+//        grid_compare(bin_left, str_left);
+//        grid_compare(bin_right, str_right);
 //        cout << endl;
     }
 
@@ -268,7 +279,7 @@ void encrypt_testing(){
     // Merge
     uint64_t bin_combined_text = merge(bin_right, bin_left, 32);
     // -----------
-    string str_combined_text = str_left + str_right;
+    string str_combined_text = str_right + str_left;
 
 //    cout << "After merge " << endl;
 //    grid_compare(bin_combined_text, merged);
@@ -281,16 +292,35 @@ void encrypt_testing(){
     bin_ciphertext = permute(bin_combined_text, inverse_permutation_bin, 64);
     // ----------------
     string str_ciphertext;
-    for(int i = 0; i < 64; i++){
-        str_ciphertext+= str_combined_text[inverse_permutation[i]-1];
+    for(int i : inverse_permutation){
+        str_ciphertext+= str_combined_text[i-1];
     }
 //    cout << "After inverse permutation " << endl;
 //    grid_compare(bin_ciphertext, test_ciphertxt);
-//    grid_compare(bin_ciphertext, str_ciphertext);
+    grid_compare(bin_ciphertext, str_ciphertext);
 
 
 }
 
+void convertDecimalToBinary_testing(){
+    int value = 2;
+
+    // New code
+    int int_decimal = value;
+    bitset<4> bit_decimal = int_decimal;
+    string str_decimal = bit_decimal.to_string();
+    cout << "New function     : " << str_decimal << endl;
+
+}
+
+void convertBinaryToDecimal_testing(){
+
+    string val = "1101";
+
+    // New
+    int int_decimal = (int)((bitset<4>) val).to_ulong();
+    cout << "New function     : " << int_decimal << endl;
+}
 
 //uint64_t encrypt(const uint64_t& plain_text, const uint64_t (&round_keys)[16], uint64_t (&xoreds)[16], uint64_t (&results)[16]){
 //    uint64_t perm, left, right;
