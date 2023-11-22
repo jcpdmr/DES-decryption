@@ -3,8 +3,6 @@
 //#include <omp.h>
 //#include "testing.h"
 
-#define ITERATION 1000000
-
 namespace fs = std::filesystem;
 
 int main(){
@@ -20,35 +18,43 @@ int main(){
     uint64_t bin_ciphe_text = 0b0011111011110001111111101100011100110001010011101111111101000001;
     string str_ciph_text = "0011111011110001111111101100011100110001010011101111111101000001";
 
-    auto start_bin = chrono::high_resolution_clock::now();
+    const int n_datapoint = 4;
 
-#pragma omp parallel for private(bin_key) default(none)
-    for(uint64_t i = 0; i < ITERATION; i++){
-        uint64_t inv_round_keys[16];
-        generate_keys(bin_key, inv_round_keys);
+    const int test_per_datapoint = 5;
 
-        uint64_t ciptxt;
-        encrypt(i, inv_round_keys);
+    int n_test = n_datapoint * test_per_datapoint;
+
+    int64_t time_results[n_test];
+    long iterations [n_test];
+     long keys_per_datapoint[n_datapoint] = {100000, 500000, 1000000, 5000000};
+//    long keys_per_datapoint[n_datapoint] = {1000000, 1000000, 1000000, 1000000, 1000000, 1000000};
+
+//    if((sizeof(keys_per_datapoint) / sizeof(keys_per_datapoint[0])) != n_datapoint){
+//        cerr << "Wrong dimension of keys attempt " << endl;
+//        exit(-1);
+//    }
+
+    for(int i = 0; i < n_test; i++){
+        iterations[i] = keys_per_datapoint[i / n_datapoint];
+        cout << "iterations[i] = " << iterations[i] << endl;
     }
 
-    auto stop_bin = chrono::high_resolution_clock::now();
 
+    auto start_bin = chrono::high_resolution_clock::now();
+#pragma omp parallel for shared(time_results, bin_key, n_test, iterations, start_bin) default(none)
+    for (int test = 0; test < n_test; test++) {
+        for (uint64_t i = 0; i < iterations[test]; i++) {
+            uint64_t inv_round_keys[16];
+            generate_keys(bin_key, inv_round_keys);
 
-//    auto start_str = chrono::high_resolution_clock::now();
-//    for(uint64_t i = 0; i < 1000; i++){
-//        string str_round_keys[16];
-//        generate_keys(str_key, str_round_keys);
-//
-//        ostringstream text;
-//        text << setw(64) << setfill("0") << i;
-//        encrypt(text, str_round_keys);
-//    }
-//    auto stop_str = chrono::high_resolution_clock::now();
-//    auto duration_str = chrono::duration_cast<chrono::microseconds>(stop_str - start_str);
-//    cout << "Bin : " << duration_str.count() << endl;
-    auto duration_bin = chrono::duration_cast<chrono::microseconds>(stop_bin - start_bin);
-    cout << "Bin : " << duration_bin.count() << endl;
-
+            uint64_t ciptxt;
+            encrypt(i, inv_round_keys);
+        }
+        auto stop_bin = chrono::high_resolution_clock::now();
+        auto duration_bin = chrono::duration_cast<chrono::microseconds>(stop_bin - start_bin);
+        time_results[test] = duration_bin.count();
+    }
+    cout << "Computation finished" <<endl;
 
 
     // Create directory to save data, if it doesn't exist
@@ -62,14 +68,17 @@ int main(){
 
 
     // Write the result to a file
-    std::ofstream f("./../output/output_data.txt", std::ios::app);
+    std::ofstream f("./../output/output_data.txt", std::ios::trunc);
     if(f.is_open()) {
-        f << "Bitwise " << ITERATION << " " << duration_bin.count() << endl;
+        for(int i = 0; i < n_test; i++){
+            f << "Bitwise " << iterations[i] << " " << time_results[i] << endl;
+        }
         f.close();
         std::cout << "Data saved successfully" << std::endl;
     }
     else {
         std::cerr << "Unable to open the file" << std::endl;
+        exit(-1);
     }
 
     return 0;
