@@ -3,6 +3,10 @@
 //#include <omp.h>
 //#include "testing.h"
 
+#define ITERATION 1000000
+
+namespace fs = std::filesystem;
+
 int main(){
 
     // Hex key                0x5465737431323334
@@ -17,14 +21,16 @@ int main(){
     string str_ciph_text = "0011111011110001111111101100011100110001010011101111111101000001";
 
     auto start_bin = chrono::high_resolution_clock::now();
+
 #pragma omp parallel for private(bin_key) default(none)
-    for(uint64_t i = 0; i < 100000000; i++){
+    for(uint64_t i = 0; i < ITERATION; i++){
         uint64_t inv_round_keys[16];
         generate_keys(bin_key, inv_round_keys);
 
         uint64_t ciptxt;
         encrypt(i, inv_round_keys);
     }
+
     auto stop_bin = chrono::high_resolution_clock::now();
 
 
@@ -44,18 +50,27 @@ int main(){
     cout << "Bin : " << duration_bin.count() << endl;
 
 
-//    uint64_t bin_round_keys[16];
-//    string str_round_keys[16];
-//    generate_keys(bin_key, bin_round_keys);
-//    generate_keys(str_key, str_round_keys);
-//
-//    string ciphertxt;
-//    uint64_t ciptxt;
-//
-//    ciphertxt = encrypt(str_plain_text, str_round_keys);
-//    ciptxt = encrypt(bin_plain_text, bin_round_keys);
-//    std::cout << "Ciphertext str: " << ciphertxt << std::endl;
-//    std::cout << "Ciphertext bin: " << std::bitset<64>(ciptxt) << std::endl;
+
+    // Create directory to save data, if it doesn't exist
+    if (!fs::exists("./../output")) {
+        if (fs::create_directory("./../output")) {
+            std::cout << "Directory created successfully" << std::endl;
+        } else {
+            std::cerr << "Unable to create the directory." << std::endl;
+        }
+    }
+
+
+    // Write the result to a file
+    std::ofstream f("./../output/output_data.txt", std::ios::app);
+    if(f.is_open()) {
+        f << "Bitwise " << ITERATION << " " << duration_bin.count() << endl;
+        f.close();
+        std::cout << "Data saved successfully" << std::endl;
+    }
+    else {
+        std::cerr << "Unable to open the file" << std::endl;
+    }
 
     return 0;
 }

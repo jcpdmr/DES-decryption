@@ -322,91 +322,23 @@ void convertBinaryToDecimal_testing(){
     cout << "New function     : " << int_decimal << endl;
 }
 
-//uint64_t encrypt(const uint64_t& plain_text, const uint64_t (&round_keys)[16], uint64_t (&xoreds)[16], uint64_t (&results)[16]){
-//    uint64_t perm, left, right;
-//    perm = permute(plain_text, initial_permutation_bin, 64);
-//
-//    split(perm, left, right, 32);
-//    for(int round = 0; round < 1; round++) {
-//
-//        uint64_t right_exp;
-//        right_exp = permute(right, expansion_table_bin, 48);
-//        // xored is 48 bits
-//        uint64_t xored = Xor(round_keys[round], right_exp);
-//
-//        xoreds[round] = xored;// Debug
-//
-//        uint64_t res = 0;
-//        for(int j = 8; j > 0; j--){
-//            uint64_t row, col;
-//            // To get row we need bits 5 and 0, and OR them to form 5 0
-//            row = ((xored >> ((j * 6) - 6)) & 0b1) | ((xored >> ((j * 6) - 2) & 0b10));
-//            // To get col we need bits 4,3,2,1
-//            col = (xored >> ((j * 6) - 5)) & 0b1111;
-//
-//            res |= ((substitution_boxes_bin[8 - j][row][col]) << ((j * 4) - 4));
-//        }
-//        results[round] = res; // Debug
-//        uint64_t perm2;
-//        perm2 = permute(res, permutation_tab_bin, 32);
-//        xored = Xor(perm2, left);
-//        left = xored;
-//        if(round < 15){
-//            uint64_t temp = right;
-//            right = xored;
-//            left = temp;
-//        }
-//    }
-//
-//}
+void check_encrypt_testing(){
+    uint64_t bin_key =        0b0101010001100101011100110111010000110001001100100011001100110100;
+    string str_key =           "0101010001100101011100110111010000110001001100100011001100110100";
 
-//string encrypt(string &plain_text, string (&round_keys)[16], string (&xoreds)[16], string (&results)[16]){
-//    string perm;
-//    for(int i : initial_permutation){
-//        perm += plain_text[i - 1];
-//    }
-//
-//    string left = perm.substr(0, 32);
-//    string right = perm.substr(32, 32);
-//
-//
-//    for(int round = 0; round < 1; round++) {
-//        string right_expanded;
-//        for(int j : expansion_table) {
-//            right_expanded += right[j-1];
-//        }
-//        string xored = Xor(round_keys[round], right_expanded);
-//
-//        xoreds[round] = xored; // Debug
-//
-//        string res;
-//        for(int j = 0; j < 8; j++){
-//            string row1 = xored.substr(j * 6,1) + xored.substr(j * 6 + 5,1);
-//            int row = convertBinaryToDecimal(row1);
-//            string col1 = xored.substr(j * 6 + 1,1) + xored.substr(j * 6 + 2,1) + xored.substr(j * 6 + 3,1) + xored.substr(j * 6 + 4,1);
-//            int col = convertBinaryToDecimal(col1);
-//            int val = substitution_boxes[j][row][col];
-//            res += convertDecimalToBinary(val);
-//        }
-//
-//        results[round] = res; // Debug
-//
-//        string perm2;
-//        for(int j : permutation_tab){
-//            perm2 += res[j-1];
-//        }
-//        xored = Xor(perm2, left);
-//        left = xored;
-//        if(round < 15){
-//            string temp = right;
-//            right = xored;
-//            left = temp;
-//        }
-//    }
-////    string combined_text = left + right;
-////    string ciphertext;
-////    for(int i : inverse_permutation){
-////        ciphertext+= combined_text[i-1];
-////    }
-////    return ciphertext;
-//}
+    string str_plain_text =    "0100001101101001011000010110111101100011011010010110000101101111";
+    uint64_t bin_plain_text = 0b0100001101101001011000010110111101100011011010010110000101101111;
+
+    uint64_t bin_round_keys[16];
+    string str_round_keys[16];
+    generate_keys(bin_key, bin_round_keys);
+    generate_keys(str_key, str_round_keys);
+
+    string ciphertxt;
+    uint64_t ciptxt;
+
+    ciphertxt = encrypt(str_plain_text, str_round_keys);
+    ciptxt = encrypt(bin_plain_text, bin_round_keys);
+    std::cout << "Ciphertext str: " << ciphertxt << std::endl;
+    std::cout << "Ciphertext bin: " << std::bitset<64>(ciptxt) << std::endl;
+}
