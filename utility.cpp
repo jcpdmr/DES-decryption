@@ -368,3 +368,31 @@ uint64_t swap_bits(uint64_t a) {
 
     return b;
 }
+
+void crack_password(const uint64_t initial_key, const uint64_t attempts, const uint64_t correct_plaintext, const uint64_t correct_ciphertext){
+
+    uint64_t correct_key = 0;
+
+    #pragma omp parallel for shared(initial_key, attempts, correct_plaintext, correct_ciphertext, correct_key) default(none)
+    for(uint64_t key = initial_key; key < (initial_key + attempts); key++){
+        // Generate inverse keys
+        uint64_t inv_round_keys[16];
+        generate_inv_keys(key, inv_round_keys);
+
+        // Decrypt the ciphertext using inverse keys
+        uint64_t plain_txt_attempt = encrypt(correct_ciphertext, inv_round_keys);
+
+        // Check if decrypted text is the correct one
+        if(plain_txt_attempt == correct_plaintext){
+            correct_key = key - 1;
+            #pragma omp cancel for
+        }
+    }
+
+    if(correct_key){
+        cout << "Found key! Binary key: " << bitset<64>(correct_key) << endl;
+    }
+//    else{
+//        cout << "Not enough attempts to find the key..." << endl;
+//    }
+}

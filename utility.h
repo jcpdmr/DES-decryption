@@ -43,6 +43,8 @@ void grid_compare(uint64_t& bin_val, string& str_val);
 
 uint64_t swap_bits(uint64_t a);
 
+void crack_password(uint64_t initial_key, uint64_t attempts, uint64_t correct_plaintext, uint64_t correct_ciphertext);
+
 // TODO: add a password to bin to convert a text password in a string of binary number
 
 #endif //DES_DECRYPTION_UTILITY_H

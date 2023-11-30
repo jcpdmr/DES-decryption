@@ -7,55 +7,45 @@ namespace fs = std::filesystem;
 
 int main(){
 
-    // Hex key                0x5465737431323334
+    // Hex key                0x5465737431323334     base10: 6081393814712496948
     uint64_t bin_key =        0b0101010001100101011100110111010000110001001100100011001100110100;
     string str_key =           "0101010001100101011100110111010000110001001100100011001100110100";
 
     // Hex plain text         0x4369616F6369616F
-    string str_plain_text =    "0100001101101001011000010110111101100011011010010110000101101111";
     uint64_t bin_plain_text = 0b0100001101101001011000010110111101100011011010010110000101101111;
+    string str_plain_text =    "0100001101101001011000010110111101100011011010010110000101101111";
 
     uint64_t bin_ciphe_text = 0b0011111011110001111111101100011100110001010011101111111101000001;
     string str_ciph_text = "0011111011110001111111101100011100110001010011101111111101000001";
 
-    const int n_datapoint = 4;
+    const int n_datapoints = 7;
+    const int tests_per_datapoint = 3;
+    int n_tot_tests = n_datapoints * tests_per_datapoint;
+    uint64_t attempts_per_datapoint[n_datapoints] = {100000, 500000, 1000000, 5000000, 10000000, 50000000, 100000000};
 
-    const int test_per_datapoint = 5;
+    uint64_t test[n_tot_tests];
+    string results[n_tot_tests];
 
-    int n_test = n_datapoint * test_per_datapoint;
-
-    int64_t time_results[n_test];
-    long iterations [n_test];
-     long keys_per_datapoint[n_datapoint] = {100000, 500000, 1000000, 5000000};
-//    long keys_per_datapoint[n_datapoint] = {1000000, 1000000, 1000000, 1000000, 1000000, 1000000};
-
-//    if((sizeof(keys_per_datapoint) / sizeof(keys_per_datapoint[0])) != n_datapoint){
-//        cerr << "Wrong dimension of keys attempt " << endl;
-//        exit(-1);
-//    }
-
-    for(int i = 0; i < n_test; i++){
-        iterations[i] = keys_per_datapoint[i / n_datapoint];
-        cout << "iterations[i] = " << iterations[i] << endl;
+    // Populate the test array assigning the number of attempts to do for each test
+    for(int i = 0; i < n_tot_tests; i++){
+        test[i] = attempts_per_datapoint[i / tests_per_datapoint];
+        cout << "tests[i] = " << test[i] << endl;
     }
 
+    cout << "Benchmark in progress..." << endl;
+    for(int i = 0; i < n_tot_tests; i++){
+        uint64_t attempts = test[i];
+        // To be sure to not find the correct key and try all attempts we start from a specific initial key
+        uint64_t initial_key = bin_key - 100 * attempts;
 
-    auto start_bin = chrono::high_resolution_clock::now();
-#pragma omp parallel for shared(time_results, bin_key, n_test, iterations, start_bin) default(none)
-    for (int test = 0; test < n_test; test++) {
-        for (uint64_t i = 0; i < iterations[test]; i++) {
-            uint64_t inv_round_keys[16];
-            generate_keys(bin_key, inv_round_keys);
-
-            uint64_t ciptxt;
-            encrypt(i, inv_round_keys);
-        }
+        auto start_bin = chrono::high_resolution_clock::now();
+        // Parallel part inside crack_password
+        crack_password(initial_key, attempts, bin_plain_text, bin_ciphe_text);
         auto stop_bin = chrono::high_resolution_clock::now();
-        auto duration_bin = chrono::duration_cast<chrono::microseconds>(stop_bin - start_bin);
-        time_results[test] = duration_bin.count();
+        auto duration_bin = chrono::duration_cast<chrono::milliseconds >(stop_bin - start_bin).count();
+        string a = to_string(duration_bin);
+        results[i] = "Binary - Attempts " + to_string((unsigned long long)attempts) + " - " + to_string(duration_bin);
     }
-    cout << "Computation finished" <<endl;
-
 
     // Create directory to save data, if it doesn't exist
     if (!fs::exists("./../output")) {
@@ -70,8 +60,8 @@ int main(){
     // Write the result to a file
     std::ofstream f("./../output/output_data.txt", std::ios::trunc);
     if(f.is_open()) {
-        for(int i = 0; i < n_test; i++){
-            f << "Bitwise " << iterations[i] << " " << time_results[i] << endl;
+        for(int i = 0; i < n_tot_tests; i++){
+            f <<  results[i] << endl;
         }
         f.close();
         std::cout << "Data saved successfully" << std::endl;
