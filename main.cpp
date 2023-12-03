@@ -7,7 +7,7 @@ namespace fs = std::filesystem;
 
 int main(){
 
-    int mode = SEQUENTIAL_STRING;
+    int mode = PARALLEL_STRING;
 
     // Hex key                0x5465737431323334     base10: 6081393814712496948
     uint64_t bin_key =        0b0101010001100101011100110111010000110001001100100011001100110100;
@@ -36,7 +36,7 @@ int main(){
         benchmark_sequential_binary(bin_plain_text, bin_ciphe_text, bin_key);
     }
     else if(mode == PARALLEL_STRING){
-
+        benchmark_parallel_string(str_plain_text, str_ciph_text, bin_key);
     }
     else if(mode == SEQUENTIAL_STRING){
         benchmark_sequential_string(str_plain_text, str_ciph_text, bin_key);

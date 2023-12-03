@@ -56,6 +56,9 @@ void benchmark_parallel_binary(uint64_t correct_plaintext, uint64_t correct_ciph
 void crack_password_sequential_binary(uint64_t initial_key, uint64_t attempts, uint64_t correct_plaintext, uint64_t correct_ciphertext);
 void benchmark_sequential_binary(uint64_t correct_plaintext, uint64_t correct_ciphertext, uint64_t bin_key);
 
+void crack_password_parallel_string(uint64_t initial_key, uint64_t attempts, const string& correct_plaintext, const string& correct_ciphertext);
+void benchmark_parallel_string(const string& correct_plaintext, const string& correct_ciphertext, const uint64_t bin_key);
+
 void crack_password_sequential_string(uint64_t initial_key, uint64_t attempts, const string& correct_plaintext, const string& correct_ciphertext);
 void benchmark_sequential_string(const string& correct_plaintext, const string& correct_ciphertext, uint64_t bin_key);
 
