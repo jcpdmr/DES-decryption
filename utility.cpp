@@ -369,7 +369,7 @@ uint64_t swap_bits(uint64_t a) {
     return b;
 }
 
-void crack_password(const uint64_t initial_key, const uint64_t attempts, const uint64_t correct_plaintext, const uint64_t correct_ciphertext){
+void crack_password_parallel_binary(const uint64_t initial_key, const uint64_t attempts, const uint64_t correct_plaintext, const uint64_t correct_ciphertext){
 
     uint64_t correct_key = 0;
 
@@ -392,7 +392,156 @@ void crack_password(const uint64_t initial_key, const uint64_t attempts, const u
     if(correct_key){
         cout << "Found key! Binary key: " << bitset<64>(correct_key) << endl;
     }
-//    else{
-//        cout << "Not enough attempts to find the key..." << endl;
-//    }
+}
+
+void crack_password_sequential_binary(const uint64_t initial_key, const uint64_t attempts, const uint64_t correct_plaintext, const uint64_t correct_ciphertext){
+
+    uint64_t correct_key = 0;
+
+    for(uint64_t key = initial_key; key < (initial_key + attempts); key++){
+        // Generate inverse keys
+        uint64_t inv_round_keys[16];
+        generate_inv_keys(key, inv_round_keys);
+
+        // Decrypt the ciphertext using inverse keys
+        uint64_t plain_txt_attempt = encrypt(correct_ciphertext, inv_round_keys);
+
+        // Check if decrypted text is the correct one
+        if(plain_txt_attempt == correct_plaintext){
+            correct_key = key - 1;
+
+        }
+    }
+
+    if(correct_key){
+        cout << "Found key! Binary key: " << bitset<64>(correct_key) << endl;
+    }
+}
+
+void benchmark_parallel_binary(const uint64_t correct_plaintext, const uint64_t correct_ciphertext, const uint64_t bin_key){
+    const int n_datapoints = 9;
+    const int tests_per_datapoint = 6;
+    uint64_t attempts_per_datapoint[n_datapoints] = {10000, 50000, 100000, 500000, 1000000, 5000000, 10000000, 50000000, 100000000};
+
+    int n_tot_tests = n_datapoints * tests_per_datapoint;
+
+    uint64_t test[n_tot_tests];
+    string results[n_tot_tests];
+
+    // Populate the test array assigning the number of attempts to do for each test
+    for(int i = 0; i < n_tot_tests; i++){
+        test[i] = attempts_per_datapoint[i / tests_per_datapoint];
+        // cout << "tests[i] = " << test[i] << endl;
+    }
+
+
+    cout << "Num of datapoints: " << n_datapoints << "    Test per datapoint: " << tests_per_datapoint << "    Attempts per datapoint: " ;
+    for(uint64_t i : attempts_per_datapoint){
+        cout << i << "  ";
+    }
+    cout << endl;
+    cout << "Parallel Binary Benchmark in progress..." << endl;
+    auto start_benchmark_bin = chrono::high_resolution_clock::now();
+
+    for(int i = 0; i < n_tot_tests; i++){
+        uint64_t attempts = test[i];
+        // To be sure to not find the correct key and try all attempts we start from a specific initial key
+        uint64_t initial_key = bin_key - 100 * attempts;
+
+        auto start_bin = chrono::high_resolution_clock::now();
+        // Parallel part inside crack_password_parallel_binary
+        crack_password_parallel_binary(initial_key, attempts, correct_plaintext, correct_ciphertext);
+        auto stop_bin = chrono::high_resolution_clock::now();
+
+        auto duration_bin = chrono::duration_cast<chrono::microseconds >(stop_bin - start_bin).count();
+        results[i] = "Binary - Attempts " + to_string((unsigned long long)attempts) + " - " + to_string(duration_bin) + " us";
+    }
+
+    auto stop_benchmark_bin = chrono::high_resolution_clock::now();
+    auto duration_benchmark_bin = chrono::duration_cast<chrono::milliseconds >(stop_benchmark_bin - start_benchmark_bin).count();
+    cout << "Benchmark elapsed time (with implicit barrier): " << duration_benchmark_bin << " ms" << endl;
+
+    // Write the result to a file
+    std::ofstream f("./../output/output_data_parallel_binary.txt", std::ios::trunc);
+    if(f.is_open()) {
+        f << "Num of datapoints: " << n_datapoints << "    Test per datapoint: " << tests_per_datapoint << "    Attempts per datapoint: " ;
+        for(uint64_t i : attempts_per_datapoint){
+            f << i << "  ";
+        }
+        f << endl;
+        for(int i = 0; i < n_tot_tests; i++){
+            f <<  results[i] << endl;
+        }
+        f << "Benchmark elapsed time (with implicit barrier): " << duration_benchmark_bin << " ms" << endl;
+        f.close();
+        std::cout << "Data saved successfully" << std::endl;
+    }
+    else {
+        std::cerr << "Unable to open the file" << std::endl;
+        exit(-1);
+    }
+}
+
+void benchmark_sequential_binary(const uint64_t correct_plaintext, const uint64_t correct_ciphertext, const uint64_t bin_key){
+    const int n_datapoints = 6;
+    const int tests_per_datapoint = 6;
+    uint64_t attempts_per_datapoint[n_datapoints] = {10000, 50000, 100000, 500000, 1000000, 5000000};
+
+    int n_tot_tests = n_datapoints * tests_per_datapoint;
+
+    uint64_t test[n_tot_tests];
+    string results[n_tot_tests];
+
+    // Populate the test array assigning the number of attempts to do for each test
+    for(int i = 0; i < n_tot_tests; i++){
+        test[i] = attempts_per_datapoint[i / tests_per_datapoint];
+        // cout << "tests[i] = " << test[i] << endl;
+    }
+
+
+    cout << "Num of datapoints: " << n_datapoints << "    Test per datapoint: " << tests_per_datapoint << "    Attempts per datapoint: " ;
+    for(uint64_t i : attempts_per_datapoint){
+        cout << i << "  ";
+    }
+    cout << endl;
+    cout << "Sequential Binary Benchmark in progress..." << endl;
+    auto start_benchmark_bin = chrono::high_resolution_clock::now();
+
+    for(int i = 0; i < n_tot_tests; i++){
+        uint64_t attempts = test[i];
+        // To be sure to not find the correct key and try all attempts we start from a specific initial key
+        uint64_t initial_key = bin_key - 100 * attempts;
+
+        auto start_bin = chrono::high_resolution_clock::now();
+        // Parallel part inside crack_password_parallel_binary
+        crack_password_sequential_binary(initial_key, attempts, correct_plaintext, correct_ciphertext);
+        auto stop_bin = chrono::high_resolution_clock::now();
+
+        auto duration_bin = chrono::duration_cast<chrono::microseconds >(stop_bin - start_bin).count();
+        results[i] = "Binary - Attempts " + to_string((unsigned long long)attempts) + " - " + to_string(duration_bin) + " us";
+    }
+
+    auto stop_benchmark_bin = chrono::high_resolution_clock::now();
+    auto duration_benchmark_bin = chrono::duration_cast<chrono::milliseconds >(stop_benchmark_bin - start_benchmark_bin).count();
+    cout << "Benchmark elapsed time (with implicit barrier): " << duration_benchmark_bin << " ms" << endl;
+
+    // Write the result to a file
+    std::ofstream f("./../output/output_data_sequential_binary.txt", std::ios::trunc);
+    if(f.is_open()) {
+        f << "Num of datapoints: " << n_datapoints << "    Test per datapoint: " << tests_per_datapoint << "    Attempts per datapoint: " ;
+        for(uint64_t i : attempts_per_datapoint){
+            f << i << "  ";
+        }
+        f << endl;
+        for(int i = 0; i < n_tot_tests; i++){
+            f <<  results[i] << endl;
+        }
+        f << "Benchmark elapsed time (with implicit barrier): " << duration_benchmark_bin << " ms" << endl;
+        f.close();
+        std::cout << "Data saved successfully" << std::endl;
+    }
+    else {
+        std::cerr << "Unable to open the file" << std::endl;
+        exit(-1);
+    }
 }
