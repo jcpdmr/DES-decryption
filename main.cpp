@@ -7,7 +7,7 @@ namespace fs = std::filesystem;
 
 int main(){
 
-    int mode = PARALLEL_STRING;
+    int mode = PARALLEL_BINARY;
 
     // Hex key                0x5465737431323334     base10: 6081393814712496948
     uint64_t bin_key =        0b0101010001100101011100110111010000110001001100100011001100110100;

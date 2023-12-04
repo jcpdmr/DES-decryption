@@ -10,9 +10,9 @@ using namespace std;
 //    return perm_string;
 //}
 
-inline uint64_t permute(const uint64_t &key, const int* pattern, const int n) {
+inline uint64_t permute(const uint64_t &key, const uint16_t *pattern, const uint16_t n) {
     uint64_t perm_key = 0;
-    for(int i = 0; i < n; i++){
+    for(uint16_t i = 0; i < n; i++){
         // ((key >> pattern[i]) & 1) check if the bit of key in position 7, 15, 23, ... from
         // the right is a 1 or 0
         // |= () << i add the bit in position 0, 1, 2, ... to the permuted key
@@ -419,9 +419,11 @@ void crack_password_sequential_binary(const uint64_t initial_key, const uint64_t
 }
 
 void benchmark_parallel_binary(const uint64_t correct_plaintext, const uint64_t correct_ciphertext, const uint64_t bin_key){
-    const int n_datapoints = 9;
+//    const int n_datapoints = 9;
+    const int n_datapoints = 5;
     const int tests_per_datapoint = 6;
-    uint64_t attempts_per_datapoint[n_datapoints] = {10000, 50000, 100000, 500000, 1000000, 5000000, 10000000, 50000000, 100000000};
+    uint64_t attempts_per_datapoint[n_datapoints] = {10000, 50000, 100000, 500000, 1000000};
+//    uint64_t attempts_per_datapoint[n_datapoints] = {10000, 50000, 100000, 500000, 1000000, 5000000, 10000000, 50000000, 100000000};
 
     int n_tot_tests = n_datapoints * tests_per_datapoint;
 

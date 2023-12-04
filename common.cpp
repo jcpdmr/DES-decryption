@@ -10,7 +10,7 @@ const int pc1[56] = {
         21,13,5,28,20,12,4
 };
 
-const int pc1_bin[56] = { // Obtained subtracting 64 from numbers in pc1
+const uint16_t pc1_bin[56] = { // Obtained subtracting 64 from numbers in pc1
          7, 15, 23, 31, 39, 47, 55,
         63,  6, 14, 22, 30, 38, 46,
         54, 62,  5, 13, 21, 29, 37,
@@ -33,7 +33,7 @@ const int pc2[48] = {
         46,42,50,36,29,32
 };
 
-const int pc2_bin[48] = { // Obtained subtracting 56 from numbers in pc1
+const uint16_t pc2_bin[48] = { // Obtained subtracting 56 from numbers in pc1
         42, 39, 45, 32, 55, 51,
         53, 28, 41, 50, 35, 46,
         33, 37, 44, 52, 30, 48,
@@ -55,7 +55,7 @@ const int initial_permutation[64] = {
         63, 55, 47, 39, 31, 23, 15,  7
 };
 
-const int initial_permutation_bin[64] = { // Obtained subtracting 64 from numbers in initial_permutation
+const uint16_t initial_permutation_bin[64] = { // Obtained subtracting 64 from numbers in initial_permutation
         6, 14, 22, 30, 38, 46, 54, 62,
         4,  12, 20, 28, 36, 44, 52, 60,
         2,  10, 18, 26, 34, 42, 50, 58,
@@ -75,7 +75,7 @@ const int expansion_table[48] = {
         28,29,28,29,30,31,32,1
 };
 
-const int expansion_table_bin[48] = { // Obtained subtracting 32 from numbers in expansion_table
+const uint16_t expansion_table_bin[48] = { // Obtained subtracting 32 from numbers in expansion_table
         0, 31, 30, 29, 28, 27, 28, 27,
         26, 25, 24, 23, 24, 23, 22, 21,
         20, 19, 20, 19, 18, 17, 16, 15,
@@ -191,7 +191,7 @@ const int permutation_tab[32] = {
         19,13,30,6,22,11,4,25
 };
 
-const int permutation_tab_bin[32] = { // Obtained subtracting 32 from numbers in initial_permutation
+const uint16_t permutation_tab_bin[32] = { // Obtained subtracting 32 from numbers in initial_permutation
         16, 25, 12, 11, 3, 20, 4, 15,
         31, 17, 9, 6, 27, 14, 1, 22,
         30, 24, 8, 18, 0, 5, 29, 23,
@@ -209,7 +209,7 @@ const int inverse_permutation[64]= {
         33,1,41,9,49,17,57,25
 };
 
-const int inverse_permutation_bin[64]= { // Obtained subtracting 64 from numbers in inverse_permutation
+const uint16_t inverse_permutation_bin[64]= { // Obtained subtracting 64 from numbers in inverse_permutation
         24, 56, 16, 48, 8, 40, 0, 32,
         25, 57, 17, 49, 9, 41, 1, 33,
         26, 58, 18, 50, 10, 42, 2, 34,
