@@ -419,9 +419,13 @@ void crack_password_sequential_binary(const uint64_t initial_key, const uint64_t
 }
 
 void benchmark_parallel_binary(const uint64_t correct_plaintext, const uint64_t correct_ciphertext, const uint64_t bin_key){
-    const int n_datapoints = 9;
-    const int tests_per_datapoint = 6;
-    uint64_t attempts_per_datapoint[n_datapoints] = {10000, 50000, 100000, 500000, 1000000, 5000000, 10000000, 50000000, 100000000};
+    // const int n_datapoints = 9;
+    // const int tests_per_datapoint = 6;
+    // uint64_t attempts_per_datapoint[n_datapoints] = {10000, 50000, 100000, 500000, 1000000, 5000000, 10000000, 50000000, 100000000};
+    
+    const int n_datapoints = 1;
+    const int tests_per_datapoint = 3;
+    uint64_t attempts_per_datapoint[n_datapoints] = {5000000};
 
     int n_tot_tests = n_datapoints * tests_per_datapoint;
 
@@ -462,7 +466,9 @@ void benchmark_parallel_binary(const uint64_t correct_plaintext, const uint64_t 
     cout << "Benchmark elapsed time (with implicit barrier): " << duration_benchmark_bin << " ms" << endl;
 
     // Write the result to a file
-    std::ofstream f("./../output/output_data_parallel_binary.txt", std::ios::trunc);
+    // string out = "./../output/output_data_parallel_binary_nthreads_" + to_string(N_THREADS) + ".txt";
+    string out = "./../output/output_multithread_test_parallel_binary_nthreads_" + to_string(N_THREADS) + ".txt";
+    std::ofstream f(out, std::ios::trunc);
     if(f.is_open()) {
         f << "Num of datapoints: " << n_datapoints << "    Test per datapoint: " << tests_per_datapoint << "    Attempts per datapoint: " ;
         for(uint64_t i : attempts_per_datapoint){
@@ -526,7 +532,8 @@ void benchmark_sequential_binary(const uint64_t correct_plaintext, const uint64_
     cout << "Benchmark elapsed time: " << duration_benchmark_bin << " ms" << endl;
 
     // Write the result to a file
-    std::ofstream f("./../output/output_data_sequential_binary.txt", std::ios::trunc);
+    string out = "./../output/output_data_sequential_binary.txt";
+    std::ofstream f(out, std::ios::trunc);
     if(f.is_open()) {
         f << "Num of datapoints: " << n_datapoints << "    Test per datapoint: " << tests_per_datapoint << "    Attempts per datapoint: " ;
         for(uint64_t i : attempts_per_datapoint){
@@ -639,7 +646,8 @@ void benchmark_sequential_string(const string& correct_plaintext, const string& 
     cout << "Benchmark elapsed time: " << duration_benchmark_bin << " ms" << endl;
 
     // Write the result to a file
-    std::ofstream f("./../output/output_data_sequential_string.txt", std::ios::trunc);
+    string out = "./../output/output_data_sequential_string.txt";
+    std::ofstream f(out, std::ios::trunc);
     if(f.is_open()) {
         f << "Num of datapoints: " << n_datapoints << "    Test per datapoint: " << tests_per_datapoint << "    Attempts per datapoint: " ;
         for(uint64_t i : attempts_per_datapoint){
@@ -660,9 +668,13 @@ void benchmark_sequential_string(const string& correct_plaintext, const string& 
 }
 
 void benchmark_parallel_string(const string& correct_plaintext, const string& correct_ciphertext, const uint64_t bin_key){
-    const int n_datapoints = 5;
-    const int tests_per_datapoint = 6;
-    uint64_t attempts_per_datapoint[n_datapoints] = {10000, 50000, 100000, 500000, 1000000};
+    // const int n_datapoints = 5;
+    // const int tests_per_datapoint = 6;
+    // uint64_t attempts_per_datapoint[n_datapoints] = {10000, 50000, 100000, 500000, 1000000};
+
+    const int n_datapoints = 1;
+    const int tests_per_datapoint = 3;
+    uint64_t attempts_per_datapoint[n_datapoints] = {5000000};
 
     int n_tot_tests = n_datapoints * tests_per_datapoint;
 
@@ -703,7 +715,8 @@ void benchmark_parallel_string(const string& correct_plaintext, const string& co
     cout << "Benchmark elapsed time: " << duration_benchmark_bin << " ms" << endl;
 
     // Write the result to a file
-    std::ofstream f("./../output/output_data_parallel_string.txt", std::ios::trunc);
+    string out = "./../output/output_multithread_test_parallel_string_nthreads_" + to_string(N_THREADS) + ".txt";
+    std::ofstream f(out, std::ios::trunc);
     if(f.is_open()) {
         f << "Num of datapoints: " << n_datapoints << "    Test per datapoint: " << tests_per_datapoint << "    Attempts per datapoint: " ;
         for(uint64_t i : attempts_per_datapoint){

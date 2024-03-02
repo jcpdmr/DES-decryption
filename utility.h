@@ -9,9 +9,12 @@
 #include <chrono>
 #include <fstream>
 #include <filesystem>
+#include <omp.h>
 #include "common.h"
 
 using namespace std;
+
+#define N_THREADS 12
 
 enum mode{
     PARALLEL_BINARY,
