@@ -17,24 +17,29 @@ In the following project I developed several sequential and parallel implementat
 
 ## DES algorithm
 The [Data Encryption Standard (DES)](https://en.wikipedia.org/wiki/Data_Encryption_Standard) is a symmetric key encryption algorithm designed to encrypt and decrypt data. The basic steps of its operation can be divided into two parts:
-1.   **Subkey generation**,
-The provided 64-bit key is reduced to 56 bits by going to eliminate one of every eight bits. This 56-bit key is divided into 16 subkeys of 48 bits each through a scheme complex permutations and rotations.
-![Subkey generation scheme](./Docs/media/DES-key-schedule.png)
+1. **Subkey generation**
+  <ul>
+    <li>The provided 64-bit key is reduced to 56 bits by going to eliminate one of every eight bits. This 56-bit key is divided into 16 subkeys of 48 bits each through a scheme complex permutations and rotations.
+      <br />
+      <img src="./Docs/media/DES-key-schedule.png" alt="Subkey generation scheme" />
+      <br />
+   </li>
+ </ul>
 
 2. **Message encryption**
-    <ul>
-      <li><i>Initial data block (IP) permutation</i>: the 64-bit plaintext is initially permuted using a permutation table.</li>
-      <li>
-        <i>Feistel function</i>: the algorithm uses a Feistel network approach, dividing the data block into two halves each of 32 bits. Feistel's function operates on one half and consists of an expansion phase that takes 32 to 48 bits, an XOR phase with one of 16 subkeys, a processing phase with substitution boxes, and finally a permutation. 
-        <br />
-        <img src="./Docs/media/Data_Encription_Standard_Flow_Diagram.png" alt="Feistel function" />
-        <br />
-        This described procedure is performed 16 times, always using a different subkey.
-        <br />
-        <img src="./Docs/media/Data_Encription_Standard_Flow_Diagram.png" alt="Block diagram of DES algorithm" />
-      </li>
-      <li><i>Final permutation (FP)</i>: the two halves obtained are exchanged and recombined through a final permutation obtaining the ciphertext.</li>
-    </ul>
+  <ul>
+    <li><i>Initial data block (IP) permutation</i>: the 64-bit plaintext is initially permuted using a permutation table.</li>
+    <li>
+      <i>Feistel function</i>: the algorithm uses a Feistel network approach, dividing the data block into two halves each of 32 bits. Feistel's function operates on one half and consists of an expansion phase that takes 32 to 48 bits, an XOR phase with one of 16 subkeys, a processing phase with substitution boxes, and finally a permutation. 
+      <br />
+      <img src="./Docs/media/Data_Encription_Standard_Flow_Diagram.png" alt="Feistel function" />
+      <br />
+      This described procedure is performed 16 times, always using a different subkey.
+      <br />
+      <img src="./Docs/media/Data_Encription_Standard_Flow_Diagram.png" alt="Block diagram of DES algorithm" />
+    </li>
+    <li><i>Final permutation (FP)</i>: the two halves obtained are exchanged and recombined through a final permutation obtaining the ciphertext.</li>
+  </ul>
 
 Since DES is an encryption algorithm that uses a symmetric key we have that the decryption process is similar, the only difference being the use of subkeys in reverse order.
 
