@@ -2,14 +2,14 @@
 <details>
   <summary>Table of Contents</summary>
   <ol>
-    <li><a href="#About">About</a></li>
-    <li><a href="#Software Environment">Software Environment</a></li>
-    <li><a href="#DES algorithm">DES algorithm</a></li>
-    <li><a href="#Test methodology">Test methodology</a></li>
-    <li><a href="#Results analysis">Results analysis</a></li>
-    <li><a href="#Profiling">Profiling</a></li>
-    <li><a href="#Appendix">Appendix</a></li>
-    <li><a href="#Project Authors">Project Authors</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#software-environment">Software Environment</a></li>
+    <li><a href="#des-algorithm">DES algorithm</a></li>
+    <li><a href="#test-methodology">Test methodology</a></li>
+    <li><a href="#results-analysis">Results analysis</a></li>
+    <li><a href="#profiling">Profiling</a></li>
+    <li><a href="#appendix">Appendix</a></li>
+    <li><a href="#project-authors">Project Authors</a></li>
   </ol>
 </details>
 
