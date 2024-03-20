@@ -17,7 +17,7 @@
 In the following project I developed **several sequential and parallel implementations of the DES algorithm**. The project was developed **from scratch in C++ using only the standard libraries**. To parallelize the code execution I chose **OpenMP as the parallel framework**. For simplicity I chose to use 64-bit key and 64-bit block text. Four different implementations were created: the first two differ in the datatype used to represent the key and text (strings and uint64_t), while the second two are a parallel version of the previous two. In addition to providing all the necessary functions for using DES to encrypt and decrypt text, a **dedicated bruteforce benchmark** was created to evaluate performance. In the next section is a brief summary of how the DES algorithm works. Next is a description of the hardware configuration used and the tools used to analyze system performance. Next is a **performance comparison** on the benchmark obtained from the different implementations and finally a **summary on the speedup achieved**. 
 
 ## Software Environment
-- **Operating System**: Ubuntu 22.04 LTS
+- **Operating System**: Ubuntu 22.04 LTS (6.5.0-26-generic)
 - **C/C++ Compiler**: GCC 11.4.0
 - **Parallel framework**: OpenMP 5.0
   
